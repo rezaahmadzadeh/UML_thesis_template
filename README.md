@@ -8,3 +8,11 @@ A Latex Template for Thesis and Dissertation Prepration. This template was adopt
 4. compile
 
 
+### Guide ###
+The following webpages from the UMass Lowell website provide details about the format, structure, and policies.
+
+- https://www.uml.edu/catalog/graduate/policies/dissertation-thesis/format.aspx
+- https://www.uml.edu/catalog/graduate/policies/dissertation-thesis/structure-parts.aspx
+- https://www.uml.edu/catalog/graduate/policies/dissertation-thesis/
+
+You can find a PDF in the guide folder with more details. Note that the pdf was last updated in 2012.
