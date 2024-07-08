@@ -1,11 +1,4 @@
 % $Log: mitthesis.cls,v $
-% Revision 1.9  2012/02/15 15:48:16  jdreed
-% Tweak the "permission" statement per the Libraries' specs
-% retrieved 15-Feb-2012
-%
-% Revision 1.8  2009/07/27 14:23:50  boojum
-% added changing draft mark
-%
 % Revision 1.6  2005/05/13 19:57:40  boojum
 % added leftblank option
 %
@@ -220,7 +213,7 @@
 %	into 1in margin.
 %  Draft mode brings the header back down.
 
-\setlength{\oddsidemargin}{0.25in}	% 1.25in left margin 
+\setlength{\oddsidemargin}{0.50in}	% 1.50in left margin 
 \setlength{\evensidemargin}{0.25in}	% 1.25in left margin (even pages)
 \setlength{\topmargin}{0.0in}		% 1in top margin
 \setlength{\textwidth}{6.0in}		% 6.0in text - 1.25in rt margin
@@ -248,25 +241,14 @@
 
 %%%%%%%  Fix various header and footer problems %%%
 
-% Draft mark on the right side of left pages (outside)
-% this mark is also the only one visible on single sided.
-\newcommand{\draftrmark}{**DRAFT**} 
-% Draft mark on the left side of right pages (outside)
-\newcommand{\draftlmark}{**DRAFT**} % 
-
-% Macros to make changing the Draft easier
-\newcommand{\drmark}[1]{\renewcommand{\draftrmark}{#1}}
-\newcommand{\dlmark}[1]{\renewcommand{\draftlmark}{#1}}
-\newcommand{\dmark}[1]{\drmark{#1}\dlmark{#1}}
-
 % Format for draft of thesis.  Define our own PageStyle -
 % Just like headings, but has foot lines with the date and warning
 
 \if@twoside         % If two-sided printing.
 \def\ps@drafthead{
     \let\@mkboth\markboth
-    \def\@oddfoot{\rm \today \hfil \sc \draftrmark}
-    \def\@evenfoot{\sc \draftlmark \hfil \rm \today }
+    \def\@oddfoot{\rm \today \hfil \sc **DRAFT**}
+    \def\@evenfoot{\sc **DRAFT** \hfil \rm \today }
     \def\@evenhead{\rm \thepage\hfil \sl \leftmark}
     \def\@oddhead{\hbox{}\sl \rightmark \hfil \rm\thepage}
     \def\chaptermark##1{\markboth {\uppercase{\ifnum \c@secnumdepth >\m@ne
@@ -279,7 +261,7 @@
 \else               % If one-sided printing.
 \def\ps@drafthead{
     \let\@mkboth\markboth
-    \def\@oddfoot{\rm \today \hfil \sc \draftrmark}
+    \def\@oddfoot{\rm \today \hfil \sc **DRAFT**}
     \def\@oddhead{\hbox{}\sl \rightmark \hfil \rm\thepage}
     \def\chaptermark##1{\markright {\uppercase{\ifnum \c@secnumdepth >\m@ne
 	\@chapapp\ \thechapter. \ \fi ##1}}}
@@ -396,13 +378,14 @@
 % holds the copyright.  This commands adds the copyright symbol to the
 % beginning, and puts the standard permission notice below.
 %% ``All rights reserved'' added.  Krishna Sethuraman (1990)
-%\def\copyrightnotice#1{\copyrightnoticetext{\copyright\ #1.  All rights
-%reserved.\par\permission}}
+
+\def\copyrightnotice#1{\copyrightnoticetext{\copyright\ #1.  All rights
+reserved.\par\permission}}
 
 % Occacionally you will need to exactly specify the text of the 
 % copyright notice.  The \copyrightnoticetext command is then useful.
-%\long\def\copyrightnoticetext#1{\gdef\@copyrightnotice{#1}}
-%\def\@copyrightnotice{\copyright\ \Mit\ \@degreeyear.  All rights reserved.}
+\long\def\copyrightnoticetext#1{\gdef\@copyrightnotice{#1}}
+\def\@copyrightnotice{\copyright\ \Mit\ \@degreeyear.  All rights reserved.}
 
 %% `vi' documentclass option: Specifying this option automatically
 %% copyrights the thesis to the author and gives MIT permission to copy and
@@ -415,8 +398,8 @@
 %% or just
 %%\@degreeyear}}
 \typeout{Copyright given to author,
-	permission to copy/distribute given to University Of Massachusetts.}
-\else \typeout{Thesis document }
+	permission to copy/distribute given to MIT.}
+\else \typeout{Thesis document copyright MIT unless otherwise (manually) specified}
 \fi
 
 \def\thesisdate#1{\gdef\@thesisdate{#1}}
@@ -433,209 +416,114 @@
 % the abstractpage as the user makes multiple calls
 % to \supervisor
 \newbox\@titlesupervisor 	\newbox\@abstractsupervisor
+%msherman
+\newbox\@titlereader 	\newbox\@abstractreader
 
 \def\supervisor#1#2{\setbox\@titlesupervisor\vbox
   {\unvbox\@titlesupervisor \vskip 10pt% plus 1fil minus 1fil
-  \def\baselinestretch{1}\large
-  \signature{Signature of Thesis Supervisor:}{#1 \\ #2 }}
+  \def\baselinestretch{1} %insert \large here to make sig line bigger msherman
+  \signature{Certified by}{#1 \\ #2 \\ }}
   \setbox\@abstractsupervisor\vbox{\unvbox\@abstractsupervisor
   \vskip\baselineskip \def\baselinestretch{1}\@normalsize 
-  \par\noindent Thesis Advisor: #1 \\ Title: #2
-  }}
+  \par\noindent Thesis Supervisor: #1 \\ Title: #2}}
+  
+  %msherman
+  \def\reader#1#2{\setbox\@titlereader\vbox
+  {\unvbox\@titlereader \vskip 10pt% plus 1fil minus 1fil
+  \def\baselinestretch{1} %insert \large here to make sig line bigger msherman
+  \signature{Certified by}{#1 \\ #2 \\ }}
+  \setbox\@abstractreader\vbox{\unvbox\@abstractreader
+  \vskip\baselineskip \def\baselinestretch{1}\@normalsize 
+  \par\noindent Committee Member: #1 \\ Title: #2}}
 
 % department chairman, not thesis committee chairman
 \def\chairman#1#2{\gdef\@chairmanname{#1}\gdef\@chairmantitle{#2}}
 
-\def\chairmann#1#2{\gdef\@chairmannamee{#1}\gdef\@chairmantitlee{#2}}
-\def\super#1#2{\gdef\@supername{#1}\gdef\@supertitle{#2}}
+%%\def\MIT{MASSACHUSETTS INSTITUTE OF TECHNOLOGY}
+\def\Mit{University of Massachusetts Lowell}
 
 %% `upcase' documentclass option: \choosecase is defined either as a dummy or
 %% a macro to change the (expanded) argument to uppercase.
 \def\maketitle{\begin{titlepage}
-\large
-{\def\baselinestretch{1.2}\Large\bf \choosecase{\@title} \par}
-
-A Thesis Presented \\
-by\\
-{\Large  \choosecase{\@author}}
-\par
-\@prevdegrees
-\par
-\choosecase{Submitted to the} \choosecase{\@department} \\
-\MIT \par
-\choosecase{in partial fulfillment of the requirements for the}
-\choosecase{\@degreeword} \\
-\choosecase{of}\\
-\choosecase{\@degree}\\
-\choosecase{\@degreemonth}
-\choosecase{\@degreeyear}
-\par
-Computer Science Program
-\end{titlepage}}
-
-\def\maketitlee{\begin{titlepage}
-%\large
-{\def\baselinestretch{1.2}\bf \choosecase{\copyright  2023 by Student's name\\  All rights reserved} \par}
-
-
-\end{titlepage}}
-
-
-
-\def\sign{\begin{titlepage}
-%\large
-{\def\baselinestretch{1.2}\Large\bf \choosecase{\@title} \par}
-
-by\par
-{\Large  \choosecase{\@author}}
-\par
-%\@prevdegrees
-\vskip 2\baselineskip
-\choosecase{Submitted to the} \choosecase{\@department}\par 
-\MIT\par
-\choosecase{In partial fulfillment of the requirements for the}
-\choosecase{\@degreeword} 
-\choosecase{of}
-\choosecase{\@degree}\\
-\choosecase{Computer Science}
-\par
-%\@degreemonth\ \@degreeyear
-\vskip 3\baselineskip
-\signature{Signature of Author:}{ \@thesisdate}
-\vfill
-Date: \dotfill\null                                                          
-\vfill
-\vfill
-\signature{Signature of Thesis
-Supervisor:}{\@supername \\ \@supertitle}
-\vfill
-\signature{Committee Member Signature:}{\@chairmanname \\ \@chairmantitle}
-\vfill
-\vfill
-\signature{Committee Member Signature:}{\@chairmannamee \\ \@chairmantitlee}
-\vfill
-\end{titlepage}}
-
-
-%%%%%%%
-%\@degreemonth\ \@degreeyear
-%\par
-%\@copyrightnotice
-%\par
-%\vskip 3\baselineskip
-%\signature{Signature of Author:}{\@author\\ \@thesisdate}
-%\par
-%\vfill
-%\unvbox\@titlesupervisor
-%\par
-%\vfill
-%\signature{Committee Member Signature:}{\@chairmanname \\ %\@chairmantitle}
-%\vfill
-%\vfill
-%\signature{Committee Member Signature:}{\@chairmannamee \\ %\@chairmantitlee}
-%\vfill
-%%%%%%%%%%%
-
-\def\abst{\begin{titlepage}
-%\large
 {\def\baselinestretch{1.2}\bf \choosecase{\@title} \par}
+\par \vfill
+\choosecase{by}
+\par \vfill
+\choosecase{\@author} \\
+\choosecase{\@prevdegrees}
+\par \vfill
+\choosecase{Submitted in partial fulfillment of the requirements} \\
+\choosecase{for the} \choosecase{\@degreeword} \choosecase{of} 
+	\choosecase{\@degree} \\
+\choosecase{\@department} \\
+\par\choosecase{\Mit}\par
 
-by\par
-{\Large  \choosecase{\@author}}
+\vskip 3\baselineskip
+\signature{Author}{\@thesisdate}
 \par
-%\@prevdegrees
-\vskip 2\baselineskip
-
-\choosecase{Abstract of a thesis submitted to the} \choosecase{\@department}
-\vskip 2\baselineskip
-\choosecase{In partial fulfillment of the requirements for the}
-\choosecase{\@degreeword} 
-\choosecase{of}
-\choosecase{\@degree}
-\choosecase{University of Massachusetts Lowell}
-%\@degreemonth\ \@degreeyear
-
+\vfill
+\unvbox\@titlesupervisor
+\unvbox\@titlereader
+\par
+\vfill
+\signature{Accepted by}{\@chairmanname \\ \@chairmantitle}
+\vfill
 \end{titlepage}}
-
-
-
-
 
 % this environment should probably be called abstract,
 % but we want people to also be able to get at the more
 % basic abstract environment
-\def\abstractpage{
-%\newcounter{savepage}
+\def\abstractpage{\cleardoublepage
 \begin{center}{\large{\bf \@title} \\
- by \\
+by \\
 \@author \\[\baselineskip]}
 \par
 \def\baselinestretch{1}\@normalsize
-Abstract of a thesis submitted to the \@department 
-\vskip 2\baselineskip
-
-In partial fulfillment of the 
-requirements for the \@degreeword\ of 
-\@degree\\
-Computer Science\\
-University of Massachusetts Lowell\\
-\choosecase{\@degreemonth}
-\choosecase{\@degreeyear}
+A thesis submitted to the \\ 
+\@department \\
+in partial fulfillment of the requirements \\
+for the \@degreeword\ of \\
+\@degree \\
+\Mit \\ \@degreeyear
 \end{center}
-\vskip 13\baselineskip
-Thesis Supervisor: Reza Ahmadzadeh \\
-Assistant Professor, \@department
-\newpage
-\begin{bstract}}
-
-\def\endabstractpage{\end{bstract}\noindent
- \newpage}
-
-\def\abstractpagee{
-%\newcounter{savepage}
-\begin{center}{\large{\bf Abstract} \\
+\par
+\unvcopy\@abstractsupervisor  \unvcopy\@abstractreader \newpage
+\begin{abstract} %msherman
 }
 
-}
-
-
-
-
-%\def\endabstractpage{\end{abstract}\noindent
-% \unvcopy\@abstractsupervisor \newpage}
+%% Changed from \unvbox to \unvcopy for use with multiple copies of abstract
+%% page.
+%% Krishna Sethuraman (1990)
+\def\endabstractpage{\end{abstract} %msherman
+	\noindent
+ }
 
 %% This counter is used to save the page number for the second copy of
 %% the abstract.
-
+\newcounter{savepage}
 
 % You can use the titlepage environment to do it all yourself if you
 % don't want to use \maketitle.  If the titlepage environment, the
 % paragraph skip is infinitely stretchable, so if you leave a blank line
 % between lines that you want space between, the space will stretch so
 % that the title page fills up the entire page.
-\def\titlepage{\centering
+\def\titlepage{\cleardoublepage\centering
   \thispagestyle{empty}
   \parindent 0pt \parskip 10pt plus 1fil minus 1fil
   \def\baselinestretch{1}\@normalsize\vbox to \vsize\bgroup\vbox to 9in\bgroup}
 % The \kern0pt pushes any depth into the height.  Thanks to Richard Stone.
 \def\endtitlepage{\par\kern 0pt\egroup\vss\egroup\newpage}
 
-\def\MIT{UNIVERSITY OF MASSACHUSETTS LOWELL}
-%\def\Mit{UNIVERSITY OF MASSACHUSETTS - LOWELL}
 
-%\def\permission{\par\noindent{\centering
-%   The author hereby grants to MIT permission to reproduce and to
-%   distribute publicly paper and electronic copies of this thesis
-%   document in whole or in part in any medium now known or hereafter
-%   created.}\par}
+
+\def\permission{\par\noindent{\centering
+   The author hereby grants to MIT permission to reproduce and
+   distribute publicly paper and electronic copies of this thesis
+   document in whole or in part.}\par}
 
 \def\signature#1#2{\par\noindent#1\dotfill\null\\*
   {\raggedleft #2\par}}
 
-\def\bstract{
-
-\centering
-\subsection*{Abstract}
-\small\def\baselinestretch{1}\@normalsize}
+\def\abstract{\subsection*{Abstract}\small\def\baselinestretch{1}\@normalsize}
 \def\endabstract{\par}
 
